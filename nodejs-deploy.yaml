@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: react-nodejs-app
+  labels:
+    app: react-nodejs
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: react-nodejs
+  template:
+    metadata:
+      labels:
+        app: react-nodejs
+    spec:
+      imagePullSecrets:
+      - name: my-dockerhub-secret
+      containers:
+      - name: app-container
+        image: njogud/react-nodejs-example:v1.0
+        ports:
+        - containerPort: 3080  # Matches your Node.js app
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: react-nodejs-service
+spec:
+  type: LoadBalancer 
+  selector:
+    app: react-nodejs
+  ports:
+    - protocol: TCP
+      port: 80         # The port you will type into your browser
+      targetPort: 3080 # The port the Service forwards to
